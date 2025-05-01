@@ -14,7 +14,15 @@ using Timer;
 
 namespace Timer {
 	public partial class MainWindow : Window {
-		private int totalSeconds;
+		public int Minutes { get; set; }
+		public int Seconds { get; set; }
+		public int TotalSeconds {
+			get => (Minutes * 60) + Seconds;
+			set {
+				Minutes = value / 60;
+				Seconds = value % 60;
+			}
+		}
 		private DispatcherTimer timer;
 		private DisplayWindow displayWindow;
 
@@ -23,13 +31,39 @@ namespace Timer {
 			timer = new DispatcherTimer();
 			timer.Interval = TimeSpan.FromSeconds(1);
 			timer.Tick += Timer_Tick;
+
+			this.Loaded += MainWindow_Loaded;
+			MinutesUpDown.ValueChanged += UpDown_ValueChanged;
+			SecondsUpDown.ValueChanged += UpDown_ValueChanged;
+		}
+
+		private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
+			displayWindow = new DisplayWindow();
+			displayWindow.Owner = this;
+			displayWindow.Left = 0;
+			displayWindow.Top = 0;
+			displayWindow.Show();
+			displayWindow.DisplayWindowClosed += DisplayWindow_DisplayWindowClosed;
+
+			Minutes = MinutesUpDown.Value ?? 0;
+			Seconds = SecondsUpDown.Value ?? 0;
+			UpdateDisplay();
+		}
+
+		private void UpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
+			if(displayWindow != null && displayWindow.IsLoaded) {
+				Minutes = MinutesUpDown.Value ?? 0;
+				Seconds = SecondsUpDown.Value ?? 0;
+
+				UpdateDisplay();
+			}
 		}
 
 		private void Start_Click(object sender, RoutedEventArgs e) {
 			int minutes = MinutesUpDown.Value ?? 0;
 			int seconds = SecondsUpDown.Value ?? 0;
 
-			totalSeconds = minutes * 60 + seconds;
+			//TotalSeconds = minutes * 60 + seconds;
 
 			if(displayWindow == null || !displayWindow.IsLoaded) {
 				displayWindow = new DisplayWindow();
@@ -58,7 +92,11 @@ namespace Timer {
 
 		private void Reset_Click(object sender, RoutedEventArgs e) {
 			timer.Stop();
-			totalSeconds = 0;
+			TotalSeconds = 0;
+
+			MinutesUpDown.Value = 0;
+			SecondsUpDown.Value = 0;
+
 			UpdateDisplay();
 		}
 
@@ -70,18 +108,18 @@ namespace Timer {
 		}
 
 		private void Timer_Tick(object sender, EventArgs e) {
-			totalSeconds--;
+			TotalSeconds--;
 			UpdateDisplay();
 		}
 
 		private void UpdateDisplay() {
-			int mins = totalSeconds / 60;
-			int secs = Math.Abs(totalSeconds % 60); // negatifte de pozitif gösterim
-			string sign = totalSeconds < 0 ? "-" : "";
+			int mins = TotalSeconds / 60;
+			int secs = Math.Abs(TotalSeconds % 60); // negatifte de pozitif gösterim
+			string sign = TotalSeconds < 0 ? "-" : "";
 			string timeStr = $"{sign}{Math.Abs(mins):D2}:{secs:D2}";
 
 			if(displayWindow != null && displayWindow.IsLoaded)
-				displayWindow.UpdateTime(timeStr, totalSeconds);
+				displayWindow.UpdateTime(timeStr, TotalSeconds);
 		}
 	}
 }
