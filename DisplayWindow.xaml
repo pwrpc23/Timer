@@ -1,0 +1,21 @@
+﻿<Window x:Class="Timer.DisplayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Timer"
+        mc:Ignorable="d"
+        Title="Sayaç"
+        WindowStyle="None"
+		ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="150" Height="35"
+        Topmost="True"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
+	<Border Background="White" CornerRadius="10" Padding="0">
+		<Viewbox>
+			<TextBlock x:Name="TimeLabel" Foreground="Green" TextAlignment="Center" Margin="0"/>
+		</Viewbox>
+	</Border>
+</Window>
