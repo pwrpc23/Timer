@@ -51,8 +51,9 @@ namespace Timer {
 						SystemSounds.Beep.Play();
 						soundPlayed = true;
 					}
-					catch {
-						// Ses çalınamazsa sessizce devam et
+					catch(Exception) {
+						// Ses çalınamazsa sessizce devam et (sistem ses desteği yoksa)
+						soundPlayed = true; // Tekrar denemeyi önle
 					}
 				}
 
