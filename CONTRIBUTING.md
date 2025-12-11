@@ -22,7 +22,7 @@ Yeni bir özellik eklemeden veya hata düzeltmesi yapmadan önce:
 **Kurulum:**
 ```bash
 # Repository'yi fork edin ve klonlayın
-git clone https://github.com/KULLANICI_ADINIZ/Timer.git
+git clone https://github.com/YOUR_USERNAME/Timer.git
 cd Timer
 
 # Yeni bir branch oluşturun

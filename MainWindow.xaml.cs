@@ -77,6 +77,50 @@ namespace Timer {
 		/// Başlat butonuna tıklandığında - sayacı başlatır
 		/// </summary>
 		private void Start_Click(object sender, RoutedEventArgs e) {
+			StartTimer();
+		}
+
+		/// <summary>
+		/// DisplayWindow kapatıldığında tetiklenir
+		/// </summary>
+		private void DisplayWindow_DisplayWindowClosed(object? sender, EventArgs e) {
+			StopTimer();
+		}
+
+		/// <summary>
+		/// Durdur butonuna tıklandığında - sayacı duraklatır
+		/// </summary>
+		private void Pause_Click(object sender, RoutedEventArgs e) {
+			PauseTimer();
+		}
+
+		/// <summary>
+		/// Devam butonuna tıklandığında - duraklatılan sayacı devam ettirir
+		/// </summary>
+		private void Resume_Click(object sender, RoutedEventArgs e) {
+			ResumeTimer();
+		}
+
+		/// <summary>
+		/// Sıfırla butonuna tıklandığında - sayacı başlangıç değerlerine döndürür
+		/// </summary>
+		private void Reset_Click(object sender, RoutedEventArgs e) {
+			ResetTimer();
+		}
+
+		/// <summary>
+		/// Kapat butonuna tıklandığında - DisplayWindow'u kapatır
+		/// </summary>
+		private void CloseDisplay_Click(object sender, RoutedEventArgs e) {
+			CloseDisplayWindow();
+		}
+
+		// Timer işlemleri için ayrı metodlar
+		
+		/// <summary>
+		/// Sayacı başlatır
+		/// </summary>
+		private void StartTimer() {
 			int minutes = MinutesUpDown.Value ?? 0;
 			int seconds = SecondsUpDown.Value ?? 0;
 
@@ -94,30 +138,30 @@ namespace Timer {
 		}
 
 		/// <summary>
-		/// DisplayWindow kapatıldığında tetiklenir
+		/// Sayacı durdurur
 		/// </summary>
-		private void DisplayWindow_DisplayWindowClosed(object? sender, EventArgs e) {
-			timer.Stop();  // DisplayWindow kapatıldığında timer da dursun
-		}
-
-		/// <summary>
-		/// Durdur butonuna tıklandığında - sayacı duraklatır
-		/// </summary>
-		private void Pause_Click(object sender, RoutedEventArgs e) {
+		private void StopTimer() {
 			timer.Stop();
 		}
 
 		/// <summary>
-		/// Devam butonuna tıklandığında - duraklatılan sayacı devam ettirir
+		/// Sayacı duraklatır
 		/// </summary>
-		private void Resume_Click(object sender, RoutedEventArgs e) {
+		private void PauseTimer() {
+			timer.Stop();
+		}
+
+		/// <summary>
+		/// Duraklatılan sayacı devam ettirir
+		/// </summary>
+		private void ResumeTimer() {
 			timer.Start();
 		}
 
 		/// <summary>
-		/// Sıfırla butonuna tıklandığında - sayacı başlangıç değerlerine döndürür
+		/// Sayacı sıfırlar
 		/// </summary>
-		private void Reset_Click(object sender, RoutedEventArgs e) {
+		private void ResetTimer() {
 			timer.Stop();
 			TotalSeconds = 0;
 
@@ -128,9 +172,9 @@ namespace Timer {
 		}
 
 		/// <summary>
-		/// Kapat butonuna tıklandığında - DisplayWindow'u kapatır
+		/// DisplayWindow'u kapatır
 		/// </summary>
-		private void CloseDisplay_Click(object sender, RoutedEventArgs e) {
+		private void CloseDisplayWindow() {
 			if(displayWindow != null && displayWindow.IsLoaded) {
 				displayWindow.Close();
 			}
@@ -164,19 +208,19 @@ namespace Timer {
 		private void MainWindow_KeyDown(object sender, KeyEventArgs e) {
 			switch(e.Key) {
 				case Key.Space:
-					Start_Click(this, new RoutedEventArgs());
+					StartTimer();
 					e.Handled = true;
 					break;
 				case Key.P:
-					Pause_Click(this, new RoutedEventArgs());
+					PauseTimer();
 					e.Handled = true;
 					break;
 				case Key.R:
-					Resume_Click(this, new RoutedEventArgs());
+					ResumeTimer();
 					e.Handled = true;
 					break;
 				case Key.Escape:
-					Reset_Click(this, new RoutedEventArgs());
+					ResetTimer();
 					e.Handled = true;
 					break;
 			}
