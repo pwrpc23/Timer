@@ -7,12 +7,6 @@
         xmlns:local="clr-namespace:Timer"
         mc:Ignorable="d"
         Title="Sayaç" Height="167" Width="264" ResizeMode="NoResize">
-	<Window.InputBindings>
-		<KeyBinding Key="Space" Command="{Binding StartCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-		<KeyBinding Key="P" Command="{Binding PauseCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-		<KeyBinding Key="R" Command="{Binding ResumeCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-		<KeyBinding Key="Escape" Command="{Binding ResetCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
-	</Window.InputBindings>
 	<StackPanel Margin="10">
 		<TextBlock Text="Dakika:" />
 		<xctk:IntegerUpDown x:Name="MinutesUpDown" Minimum="0" Maximum="59" Value="0" Width="80"/>
