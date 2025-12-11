@@ -8,13 +8,20 @@ using System.Windows.Media;
 
 namespace Timer {
 	/// <summary>
-	/// Interaction logic for DisplayWindow.xaml
+	/// Sayaç gösterim penceresi - her zaman üstte, taşınabilir, şeffaf tasarım
 	/// </summary>
 	public partial class DisplayWindow : Window {
+		/// <summary>
+		/// Pencere kapatıldığında tetiklenir
+		/// </summary>
 		public event EventHandler DisplayWindowClosed;
+		
 		private bool showTimeText = true; // metin mi gösteriliyor, yoksa "SÜRE DOLDU" mu
 		private bool soundPlayed = false; // ses çalındı mı kontrolü
 
+		/// <summary>
+		/// DisplayWindow constructor - pencere ayarlarını başlatır
+		/// </summary>
 		public DisplayWindow() {
 			InitializeComponent();
 			this.LocationChanged += DisplayWindow_LocationChanged;
@@ -62,6 +69,9 @@ namespace Timer {
 			}
 		}
 
+		/// <summary>
+		/// Pencere pozisyonunu ekran sınırları içinde tutar
+		/// </summary>
 		private void DisplayWindow_LocationChanged(object? sender, EventArgs e) {
 			var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
 			var screen = Screen.FromHandle(hwnd);
@@ -82,6 +92,9 @@ namespace Timer {
 				this.Top = maxTop;
 		}
 
+		/// <summary>
+		/// Fare sol tık ile pencere sürükleme
+		/// </summary>
 		private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 			this.DragMove();
 		}

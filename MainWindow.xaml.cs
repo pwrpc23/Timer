@@ -45,6 +45,9 @@ namespace Timer {
 			SecondsUpDown.ValueChanged += UpDown_ValueChanged;
 		}
 
+		/// <summary>
+		/// Pencere yüklendiğinde çalışır - DisplayWindow'u başlatır
+		/// </summary>
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
 			displayWindow = new DisplayWindow();
 			displayWindow.Owner = this;
@@ -58,6 +61,9 @@ namespace Timer {
 			UpdateDisplay();
 		}
 
+		/// <summary>
+		/// Dakika veya saniye değiştiğinde tetiklenir
+		/// </summary>
 		private void UpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
 			if(displayWindow != null && displayWindow.IsLoaded) {
 				Minutes = MinutesUpDown.Value ?? 0;
@@ -67,6 +73,9 @@ namespace Timer {
 			}
 		}
 
+		/// <summary>
+		/// Başlat butonuna tıklandığında - sayacı başlatır
+		/// </summary>
 		private void Start_Click(object sender, RoutedEventArgs e) {
 			int minutes = MinutesUpDown.Value ?? 0;
 			int seconds = SecondsUpDown.Value ?? 0;
@@ -84,18 +93,30 @@ namespace Timer {
 			timer.Start();
 		}
 
+		/// <summary>
+		/// DisplayWindow kapatıldığında tetiklenir
+		/// </summary>
 		private void DisplayWindow_DisplayWindowClosed(object? sender, EventArgs e) {
 			timer.Stop();  // DisplayWindow kapatıldığında timer da dursun
 		}
 
+		/// <summary>
+		/// Durdur butonuna tıklandığında - sayacı duraklatır
+		/// </summary>
 		private void Pause_Click(object sender, RoutedEventArgs e) {
 			timer.Stop();
 		}
 
+		/// <summary>
+		/// Devam butonuna tıklandığında - duraklatılan sayacı devam ettirir
+		/// </summary>
 		private void Resume_Click(object sender, RoutedEventArgs e) {
 			timer.Start();
 		}
 
+		/// <summary>
+		/// Sıfırla butonuna tıklandığında - sayacı başlangıç değerlerine döndürür
+		/// </summary>
 		private void Reset_Click(object sender, RoutedEventArgs e) {
 			timer.Stop();
 			TotalSeconds = 0;
@@ -106,6 +127,9 @@ namespace Timer {
 			UpdateDisplay();
 		}
 
+		/// <summary>
+		/// Kapat butonuna tıklandığında - DisplayWindow'u kapatır
+		/// </summary>
 		private void CloseDisplay_Click(object sender, RoutedEventArgs e) {
 			if(displayWindow != null && displayWindow.IsLoaded) {
 				displayWindow.Close();
@@ -113,11 +137,17 @@ namespace Timer {
 			timer.Stop();
 		}
 
+		/// <summary>
+		/// Her saniye tetiklenir - sayacı bir azaltır
+		/// </summary>
 		private void Timer_Tick(object sender, EventArgs e) {
 			TotalSeconds--;
 			UpdateDisplay();
 		}
 
+		/// <summary>
+		/// DisplayWindow'daki zamanı günceller
+		/// </summary>
 		private void UpdateDisplay() {
 			int mins = TotalSeconds / 60;
 			int secs = Math.Abs(TotalSeconds % 60); // negatifte de pozitif gösterim
