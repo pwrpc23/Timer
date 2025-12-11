@@ -1,21 +1,25 @@
-﻿using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-//using System;
 using System.Windows.Threading;
-using Timer;
 
 namespace Timer {
+	/// <summary>
+	/// Ana pencere sınıfı - sayaç kontrollerini içerir
+	/// </summary>
 	public partial class MainWindow : Window {
+		/// <summary>
+		/// Dakika değerini saklar
+		/// </summary>
 		public int Minutes { get; set; }
+		
+		/// <summary>
+		/// Saniye değerini saklar
+		/// </summary>
 		public int Seconds { get; set; }
+		
+		/// <summary>
+		/// Toplam saniye cinsinden süreyi hesaplar ve ayarlar
+		/// </summary>
 		public int TotalSeconds {
 			get => (Minutes * 60) + Seconds;
 			set {
@@ -26,6 +30,9 @@ namespace Timer {
 		private DispatcherTimer timer;
 		private DisplayWindow displayWindow;
 
+		/// <summary>
+		/// MainWindow constructor - timer ve event handler'ları başlatır
+		/// </summary>
 		public MainWindow() {
 			InitializeComponent();
 			timer = new DispatcherTimer();
@@ -33,6 +40,7 @@ namespace Timer {
 			timer.Tick += Timer_Tick;
 
 			this.Loaded += MainWindow_Loaded;
+			this.KeyDown += MainWindow_KeyDown;
 			MinutesUpDown.ValueChanged += UpDown_ValueChanged;
 			SecondsUpDown.ValueChanged += UpDown_ValueChanged;
 		}
@@ -62,8 +70,6 @@ namespace Timer {
 		private void Start_Click(object sender, RoutedEventArgs e) {
 			int minutes = MinutesUpDown.Value ?? 0;
 			int seconds = SecondsUpDown.Value ?? 0;
-
-			//TotalSeconds = minutes * 60 + seconds;
 
 			if(displayWindow == null || !displayWindow.IsLoaded) {
 				displayWindow = new DisplayWindow();
@@ -120,6 +126,30 @@ namespace Timer {
 
 			if(displayWindow != null && displayWindow.IsLoaded)
 				displayWindow.UpdateTime(timeStr, TotalSeconds);
+		}
+
+		/// <summary>
+		/// Klavye kısayollarını işler
+		/// </summary>
+		private void MainWindow_KeyDown(object sender, KeyEventArgs e) {
+			switch(e.Key) {
+				case Key.Space:
+					Start_Click(this, new RoutedEventArgs());
+					e.Handled = true;
+					break;
+				case Key.P:
+					Pause_Click(this, new RoutedEventArgs());
+					e.Handled = true;
+					break;
+				case Key.R:
+					Resume_Click(this, new RoutedEventArgs());
+					e.Handled = true;
+					break;
+				case Key.Escape:
+					Reset_Click(this, new RoutedEventArgs());
+					e.Handled = true;
+					break;
+			}
 		}
 	}
 }

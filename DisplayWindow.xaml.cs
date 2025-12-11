@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System;
+using System.Media;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 
 namespace Timer {
@@ -21,6 +13,7 @@ namespace Timer {
 	public partial class DisplayWindow : Window {
 		public event EventHandler DisplayWindowClosed;
 		private bool showTimeText = true; // metin mi gösteriliyor, yoksa "SÜRE DOLDU" mu
+		private bool soundPlayed = false; // ses çalındı mı kontrolü
 
 		public DisplayWindow() {
 			InitializeComponent();
@@ -35,6 +28,7 @@ namespace Timer {
 		public void UpdateTime(string time, int remainingSeconds) {
 			if(remainingSeconds >= 0) {
 				TimeLabel.Text = time;
+				soundPlayed = false; // Pozitif süreye dönüldüğünde ses tekrar çalabilir
 
 				if(remainingSeconds <= 120) // kırmızı
 					TimeLabel.Foreground = new SolidColorBrush(Colors.Red);
@@ -44,6 +38,17 @@ namespace Timer {
 					TimeLabel.Foreground = new SolidColorBrush(Colors.Green);
 			}
 			else {
+				// Süre dolduğunda ses çal (sadece bir kez)
+				if(!soundPlayed) {
+					try {
+						SystemSounds.Beep.Play();
+						soundPlayed = true;
+					}
+					catch {
+						// Ses çalınamazsa sessizce devam et
+					}
+				}
+
 				// Süre dolduktan sonra: yanıp sönen davranış
 				if(showTimeText) {
 					TimeLabel.Text = time;  // süreyi göster
