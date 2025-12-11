@@ -1,21 +1,25 @@
-﻿using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-//using System;
 using System.Windows.Threading;
-using Timer;
 
 namespace Timer {
+	/// <summary>
+	/// Ana pencere sınıfı - sayaç kontrollerini içerir
+	/// </summary>
 	public partial class MainWindow : Window {
+		/// <summary>
+		/// Dakika değerini saklar
+		/// </summary>
 		public int Minutes { get; set; }
+		
+		/// <summary>
+		/// Saniye değerini saklar
+		/// </summary>
 		public int Seconds { get; set; }
+		
+		/// <summary>
+		/// Toplam saniye cinsinden süreyi hesaplar ve ayarlar
+		/// </summary>
 		public int TotalSeconds {
 			get => (Minutes * 60) + Seconds;
 			set {
@@ -26,6 +30,9 @@ namespace Timer {
 		private DispatcherTimer timer;
 		private DisplayWindow displayWindow;
 
+		/// <summary>
+		/// MainWindow constructor - timer ve event handler'ları başlatır
+		/// </summary>
 		public MainWindow() {
 			InitializeComponent();
 			timer = new DispatcherTimer();
@@ -33,10 +40,14 @@ namespace Timer {
 			timer.Tick += Timer_Tick;
 
 			this.Loaded += MainWindow_Loaded;
+			this.KeyDown += MainWindow_KeyDown;
 			MinutesUpDown.ValueChanged += UpDown_ValueChanged;
 			SecondsUpDown.ValueChanged += UpDown_ValueChanged;
 		}
 
+		/// <summary>
+		/// Pencere yüklendiğinde çalışır - DisplayWindow'u başlatır
+		/// </summary>
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e) {
 			displayWindow = new DisplayWindow();
 			displayWindow.Owner = this;
@@ -50,6 +61,9 @@ namespace Timer {
 			UpdateDisplay();
 		}
 
+		/// <summary>
+		/// Dakika veya saniye değiştiğinde tetiklenir
+		/// </summary>
 		private void UpDown_ValueChanged(object sender, RoutedPropertyChangedEventArgs<object> e) {
 			if(displayWindow != null && displayWindow.IsLoaded) {
 				Minutes = MinutesUpDown.Value ?? 0;
@@ -59,11 +73,56 @@ namespace Timer {
 			}
 		}
 
+		/// <summary>
+		/// Başlat butonuna tıklandığında - sayacı başlatır
+		/// </summary>
 		private void Start_Click(object sender, RoutedEventArgs e) {
+			StartTimer();
+		}
+
+		/// <summary>
+		/// DisplayWindow kapatıldığında tetiklenir
+		/// </summary>
+		private void DisplayWindow_DisplayWindowClosed(object? sender, EventArgs e) {
+			StopTimer();
+		}
+
+		/// <summary>
+		/// Durdur butonuna tıklandığında - sayacı duraklatır
+		/// </summary>
+		private void Pause_Click(object sender, RoutedEventArgs e) {
+			PauseTimer();
+		}
+
+		/// <summary>
+		/// Devam butonuna tıklandığında - duraklatılan sayacı devam ettirir
+		/// </summary>
+		private void Resume_Click(object sender, RoutedEventArgs e) {
+			ResumeTimer();
+		}
+
+		/// <summary>
+		/// Sıfırla butonuna tıklandığında - sayacı başlangıç değerlerine döndürür
+		/// </summary>
+		private void Reset_Click(object sender, RoutedEventArgs e) {
+			ResetTimer();
+		}
+
+		/// <summary>
+		/// Kapat butonuna tıklandığında - DisplayWindow'u kapatır
+		/// </summary>
+		private void CloseDisplay_Click(object sender, RoutedEventArgs e) {
+			CloseDisplayWindow();
+		}
+
+		// Timer işlemleri için ayrı metodlar
+		
+		/// <summary>
+		/// Sayacı başlatır
+		/// </summary>
+		private void StartTimer() {
 			int minutes = MinutesUpDown.Value ?? 0;
 			int seconds = SecondsUpDown.Value ?? 0;
-
-			//TotalSeconds = minutes * 60 + seconds;
 
 			if(displayWindow == null || !displayWindow.IsLoaded) {
 				displayWindow = new DisplayWindow();
@@ -78,19 +137,31 @@ namespace Timer {
 			timer.Start();
 		}
 
-		private void DisplayWindow_DisplayWindowClosed(object? sender, EventArgs e) {
-			timer.Stop();  // DisplayWindow kapatıldığında timer da dursun
-		}
-
-		private void Pause_Click(object sender, RoutedEventArgs e) {
+		/// <summary>
+		/// Sayacı durdurur
+		/// </summary>
+		private void StopTimer() {
 			timer.Stop();
 		}
 
-		private void Resume_Click(object sender, RoutedEventArgs e) {
+		/// <summary>
+		/// Sayacı duraklatır
+		/// </summary>
+		private void PauseTimer() {
+			timer.Stop();
+		}
+
+		/// <summary>
+		/// Duraklatılan sayacı devam ettirir
+		/// </summary>
+		private void ResumeTimer() {
 			timer.Start();
 		}
 
-		private void Reset_Click(object sender, RoutedEventArgs e) {
+		/// <summary>
+		/// Sayacı sıfırlar
+		/// </summary>
+		private void ResetTimer() {
 			timer.Stop();
 			TotalSeconds = 0;
 
@@ -100,18 +171,27 @@ namespace Timer {
 			UpdateDisplay();
 		}
 
-		private void CloseDisplay_Click(object sender, RoutedEventArgs e) {
+		/// <summary>
+		/// DisplayWindow'u kapatır
+		/// </summary>
+		private void CloseDisplayWindow() {
 			if(displayWindow != null && displayWindow.IsLoaded) {
 				displayWindow.Close();
 			}
 			timer.Stop();
 		}
 
+		/// <summary>
+		/// Her saniye tetiklenir - sayacı bir azaltır
+		/// </summary>
 		private void Timer_Tick(object sender, EventArgs e) {
 			TotalSeconds--;
 			UpdateDisplay();
 		}
 
+		/// <summary>
+		/// DisplayWindow'daki zamanı günceller
+		/// </summary>
 		private void UpdateDisplay() {
 			int mins = TotalSeconds / 60;
 			int secs = Math.Abs(TotalSeconds % 60); // negatifte de pozitif gösterim
@@ -120,6 +200,30 @@ namespace Timer {
 
 			if(displayWindow != null && displayWindow.IsLoaded)
 				displayWindow.UpdateTime(timeStr, TotalSeconds);
+		}
+
+		/// <summary>
+		/// Klavye kısayollarını işler
+		/// </summary>
+		private void MainWindow_KeyDown(object sender, KeyEventArgs e) {
+			switch(e.Key) {
+				case Key.Space:
+					StartTimer();
+					e.Handled = true;
+					break;
+				case Key.P:
+					PauseTimer();
+					e.Handled = true;
+					break;
+				case Key.R:
+					ResumeTimer();
+					e.Handled = true;
+					break;
+				case Key.Escape:
+					ResetTimer();
+					e.Handled = true;
+					break;
+			}
 		}
 	}
 }

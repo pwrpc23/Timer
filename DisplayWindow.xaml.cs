@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using System;
+using System.Media;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 
 namespace Timer {
 	/// <summary>
-	/// Interaction logic for DisplayWindow.xaml
+	/// Sayaç gösterim penceresi - her zaman üstte, taşınabilir, şeffaf tasarım
 	/// </summary>
 	public partial class DisplayWindow : Window {
+		/// <summary>
+		/// Pencere kapatıldığında tetiklenir
+		/// </summary>
 		public event EventHandler DisplayWindowClosed;
+		
 		private bool showTimeText = true; // metin mi gösteriliyor, yoksa "SÜRE DOLDU" mu
+		private bool soundPlayed = false; // ses çalındı mı kontrolü
 
+		/// <summary>
+		/// DisplayWindow constructor - pencere ayarlarını başlatır
+		/// </summary>
 		public DisplayWindow() {
 			InitializeComponent();
 			this.LocationChanged += DisplayWindow_LocationChanged;
@@ -35,6 +35,7 @@ namespace Timer {
 		public void UpdateTime(string time, int remainingSeconds) {
 			if(remainingSeconds >= 0) {
 				TimeLabel.Text = time;
+				soundPlayed = false; // Pozitif süreye dönüldüğünde ses tekrar çalabilir
 
 				if(remainingSeconds <= 120) // kırmızı
 					TimeLabel.Foreground = new SolidColorBrush(Colors.Red);
@@ -44,6 +45,18 @@ namespace Timer {
 					TimeLabel.Foreground = new SolidColorBrush(Colors.Green);
 			}
 			else {
+				// Süre dolduğunda ses çal (sadece bir kez)
+				if(!soundPlayed) {
+					try {
+						SystemSounds.Beep.Play();
+						soundPlayed = true;
+					}
+					catch(Exception) {
+						// Ses çalınamazsa sessizce devam et (sistem ses desteği yoksa)
+						soundPlayed = true; // Tekrar denemeyi önle
+					}
+				}
+
 				// Süre dolduktan sonra: yanıp sönen davranış
 				if(showTimeText) {
 					TimeLabel.Text = time;  // süreyi göster
@@ -57,6 +70,9 @@ namespace Timer {
 			}
 		}
 
+		/// <summary>
+		/// Pencere pozisyonunu ekran sınırları içinde tutar
+		/// </summary>
 		private void DisplayWindow_LocationChanged(object? sender, EventArgs e) {
 			var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
 			var screen = Screen.FromHandle(hwnd);
@@ -77,6 +93,9 @@ namespace Timer {
 				this.Top = maxTop;
 		}
 
+		/// <summary>
+		/// Fare sol tık ile pencere sürükleme
+		/// </summary>
 		private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
 			this.DragMove();
 		}

@@ -7,6 +7,13 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon>timer.ico</ApplicationIcon>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Timer - Geri Sayım Uygulaması</Product>
+    <Company>pwrpc23</Company>
+    <Copyright>Copyright © 2024</Copyright>
+    <Description>Windows için modern geri sayım uygulaması</Description>
   </PropertyGroup>
 
   <ItemGroup>
